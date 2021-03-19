@@ -8,7 +8,6 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 }));
 
 const User = require('./dbModels/authData');
-const Message = require('./dbModels/message');
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUnifiedTopology: true});
