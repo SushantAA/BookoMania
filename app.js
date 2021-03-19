@@ -68,14 +68,14 @@ app.post('/auth',ffs, async (req,res)=>{
 })
 
 
-app.get('/cats',(req,res)=>{
-    res.send('<h1>catspage</h1>');
-})
+// app.get('/cats',(req,res)=>{
+//     res.send('<h1>catspage</h1>');
+// })
 
-app.get('/cats/:anyobj',(req,res)=>{
-    const {anyobj} = req.params;
-    res.send(`<h1>${anyobj}</h1>`);
-});
+// app.get('/cats/:anyobj',(req,res)=>{
+//     const {anyobj} = req.params;
+//     res.send(`<h1>${anyobj}</h1>`);
+// });
 
 app.listen(3030,()=>{
     console.log('server running :) 3030');
