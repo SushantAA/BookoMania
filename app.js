@@ -27,21 +27,6 @@ app.get('/',(req,res)=>{
     res.render('home.ejs');
 })
 
-app.get('/chat', async (req,res)=>{
-    const all_message = await Message.find();
-    res.render('chat.ejs',{all_message});
-})
-
-app.put('/chat', async (req,res)=>{
-    
-    const a = new Message(req.body);
-
-    await a.save();
-
-    const all_message = await Message.find();
-    res.render('chat.ejs',{all_message});
-})
-
 app.patch('/auth',(req,res)=>{
     res.send('UPDATING SOMETHING');
 });
