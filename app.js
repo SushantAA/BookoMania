@@ -8,6 +8,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 }));
 
 const User = require('./dbModels/authData');
+const Hotel = require('./dbModels/hotelData');
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUnifiedTopology: true});
@@ -18,7 +19,8 @@ mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUn
 // kitty.save().then(() => console.log('meow'));
 
 // method overrirde for put , patch , delete ,etc
-const methodOverride = require('method-override')
+const methodOverride = require('method-override');
+// const { type } = require('node:os');
 app.use(methodOverride('_method'))
 
 
@@ -34,19 +36,56 @@ app.get('/auth',(req,res)=>{
     res.render('auth.ejs');
 });
 
+app.get('/hotels',async (req,res)=>{
+    const allHotel = await Hotel.find();
+
+    console.log(allHotel);
+
+    // res.render('viewHotleDetails.ejs',{allHotel});
+    res.render('hotels.ejs',{allHotel});
+});
+
+app.get('/hotel',(req,res)=>{
+    res.render('hotel.ejs');
+})
+
+app.get('/addHotel',(req,res)=>{
+    res.render('addHotel.ejs');
+})
+
+app.post('/addHotel', async (req,res)=>{
+    const  {hotelName,hotelLocation,hotelRoomPrice} = req.body;
+    const newHotel = new Hotel({
+        name:hotelName,
+        location:hotelLocation,
+        price:hotelRoomPrice
+    });
+
+    await newHotel.save().then(()=>console.log(req.body));
+
+    const allHotel = await Hotel.find();
+
+    console.log(allHotel);
+
+    res.render('hotels.ejs',{allHotel});
+});
 
 const ffs = async (req,res,next) => {
-    console.log('middle ware hit yooooooo');
 
     const {name ,password} = req.body;
 
-    const a = await User.find({
+    console.log(name,' = ',password);
+
+    const a = await User.findOne({
         name : name ,
         password : password
     })
 
+    console.log(a);
+
+
     if(a){
-        res.send('ALREADY TAKEN :))))');
+        res.send('ALREADY TAKEN :)');
     }else{
         next();
     }
@@ -59,23 +98,13 @@ app.post('/auth',ffs, async (req,res)=>{
         password:password
     });
     await newUser.save().then(()=>console.log(req.body));
-    
+
     const allUser = await User.find();
 
     console.log(allUser);
 
     res.render('viewDetails.ejs',{allUser});
 })
-
-
-// app.get('/cats',(req,res)=>{
-//     res.send('<h1>catspage</h1>');
-// })
-
-// app.get('/cats/:anyobj',(req,res)=>{
-//     const {anyobj} = req.params;
-//     res.send(`<h1>${anyobj}</h1>`);
-// });
 
 app.listen(3030,()=>{
     console.log('server running :) 3030');
