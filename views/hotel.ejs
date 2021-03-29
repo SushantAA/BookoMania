@@ -1,11 +1,22 @@
 <h1>1 hotel</h1>
+
+<a href="/logout">logout</a>
+
 <h3><%= aa.name %></h3>
 <h3><%= aa.location %></h3>
 <h3><%= aa.price %></h3>
 
+<form action="/hotel/<%=aa._id%>?_method=DELETE" method="POST" >
+<button>delete</button>
+
 <h1>Room</h1>
 <% for(a of aa.room) { %>
+    <div>
     <h4>a = <%=a%></h4>
+    <form action="/room/<%=aa._id%>/<%=a._id%>?_method=DELETE" method="POST" >
+    <button>delete</button>
+    </form>
+    </div>
 <%}%>
 
 <form action="/addRoom/<%=aa._id%>" method="POST" >
@@ -27,7 +38,12 @@
 <h1>Comments</h1>
 
 <% for(a of aa.comment) { %>
+    <div>
     <h4>a = <%=a%></h4>
+    <form action="/comment/<%=aa._id%>/<%=a._id%>?_method=DELETE" method="POST" >
+        <button>delete</button>
+    </form>
+    </div>
 <%}%>
 
 

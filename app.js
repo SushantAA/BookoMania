@@ -1,6 +1,7 @@
-<<<<<<< HEAD
 const express = require('express');
 const app = express();
+const passport = require('passport');
+const localStrategy = require('passport-local');
 
 const bodyParser = require('body-parser')
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
@@ -8,110 +9,71 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
 
-// console passport = require('passport')
-
-// const User = require('./dbModels/authData');
 const Hotel = require('./dbModels/hotelData');
 const Room = require('./dbModels/roomData');
 const Comment = require('./dbModels/commentData');
-const User = require('./dbModels/userData');
+const User = require('./dbModels/User');
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUnifiedTopology: true});
 
-// const Cat = mongoose.model('Cat', { name: String });
-
-// const kitty = new Cat({ name: 'uouo' });
-// kitty.save().then(() => console.log('meow'));
-
 // method overrirde for put , patch , delete ,etc
 const methodOverride = require('method-override');
-// const { type } = require('node:os');
 app.use(methodOverride('_method'))
 
+app.use(passport.initialize());
+app.use(passport.session());
 
-// Passport 
-// app.use(passport.initialize());
-// app.use(passport.session());
+passport.use(new localStrategy(User.authenticate()));
 
-// passport.serializeUser(User.serializeUser());
-// passport.deserializeUser(User.deserializeUser());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
-// const LocalStrategy = require('passport-local').Strategy;
-// const passport = require('passport');
-// passport.use(new LocalStrategy(User.authenticate()));
+const isloggedin = (req,res,next) => {
+    console.log('req.isAuthenticated =' ,req.isAuthenticated());
+    if(req.isAuthenticated()){
+         next();
+    }else{
+       return res.redirect('/login');
+    }
+}
 
-// Registering
-// app.post('/login', function(req, res) {
-      
-//     Users=new User({email: req.body.email, username : req.body.username});
-  
-//           User.register(Users, req.body.password, function(err, user) {
-//             if (err) {
-//                 console.log("not done");
-//             //   res.json({success:false, message:"Your account couldnot be saved. Error: ", err}) 
-//             }else{
-//                 console.log("done");
-//             //   res.json({success: true, message: "Your account has been saved"})
-//             }
-//           });
-// });
+app.get('/register',(req,res)=>{
+    res.render('register.ejs');
+})
 
-// login
-// userController.doLogin = function(req, res) {
-//     if(!req.body.username){
-//         res.json({success: false, message: "Username was not given"})
-//     } else {
-//         if(!req.body.password){
-//         res.json({success: false, message: "Password was not given"})
-//         }else{
-//         passport.authenticate('local', function (err, user, info) {
-//             if(err){
-//                 console.log('error in auth login');
-//             // res.json({success: false, message: err})
-//             } else{
-//             if (! user) {
-//                 console.log('auth login done');
-//                 // res.json({success: false, message: 'username or password incorrect'})
-//             } else{
-//                 req.login(user, function(err){
-//                 if(err){
-//                     res.json({success: false, message: err})
-//                 }else{
-//                     const token = jwt.sign({userId : user._id,
-//                     username:user.username}, secretkey,
-//                         {expiresIn: '24h'})
-//                         console.log('done else');
-//                     // res.json({success:true, message:"Authentication
-//                     //     successful", token: token });
-//                 }
-//                 })
-//             }
-//             }
-//         })(req, res);
-//         }
-//     }
-//     };
-    
+app.post('/register',async(req,res)=>{
+    console.log('ppppppppppppppppppppppppppppppp\n');
+    const {userName,password,email} = req.body;
+    const user = new User({email:email,username:userName});
+    const newUser = await User.register(user,password);
+    console.log('newUser =',newUser);
+    res.redirect('/');
+})
+
+app.get('/login',(req,res)=>{
+    res.render('login.ejs');
+})
+
+app.post('/login',passport.authenticate('local',{failureFlash:true   ,failureRedirect:'/login'}),(req,res)=>{
+ // logged
+    res.redirect('/');
+});
+
+app.get('/logout',(req,res)=>{
+    req.logout();
+    res.redirect('/');
+});
 
 app.get('/',(req,res)=>{
     res.render('home.ejs');
 })
-
-app.patch('/auth',(req,res)=>{
-    res.send('UPDATING SOMETHING');
-});
-
-app.get('/auth',(req,res)=>{
-    res.render('auth.ejs');
-});
 
 app.get('/hotels',async (req,res)=>{
     const allHotel = await Hotel.find();
 
     console.log(allHotel);
 
-    // res.render('viewHotleDetails.ejs',{allHotel});
     res.render('hotels.ejs',{allHotel});
 });
 
@@ -124,8 +86,6 @@ app.get('/hotel/:id', async (req,res)=>{
 })
 
 app.get('/addHotel', async (req,res)=>{
-
-    // await newRoom.save().then(()=>console.log(req.body));
 
     const allRoom = await Room.find();
 
@@ -140,7 +100,38 @@ app.get('/addRoom/:id', async (req,res)=>{
     res.render('addRoom.ejs',{aa});
 })
 
-app.post('/addRoom/:id',async (req,res)=>{
+app.delete('/room/:hid/:id', async (req,res)=>{
+    const {hid,id} = req.params;
+    console.log('room delete id =',id);
+    await Room.findByIdAndDelete(id);
+
+    const h = Hotel.findById(hid);
+    h.room.filter(id);
+    await h.save();
+
+    res.redirect(`/hotel/${hid}`);
+})
+
+app.delete('/hotel/:id',async (req,res)=>{
+    const {hid,id} = req.params;
+    console.log('hotel delete id =',id);
+    await Hotel.findByIdAndDelete(id);
+    res.redirect('/hotels');
+})
+
+app.delete('/comment/:hid/:id', async(req,res)=>{
+    const {id} = req.params;
+    console.log('comment delete id =',id);
+    await Comment.findByIdAndDelete(id);
+
+    const h = Hotel.findById(hid);
+    h.comment.filter(id);
+     h.save();
+
+    res.redirect(`/hotel/${hid}`);
+})
+
+app.post('/addRoom/:id',isloggedin,async (req,res)=>{
     const {id} = req.params;
     console.log('add room kkkkkkkkkkkkkkkkkkkkkkkkkkkkk\n');
     const  {roomName,roomSize,roomPrice} = req.body;
@@ -163,8 +154,6 @@ app.post('/addRoom/:id',async (req,res)=>{
 
     aa.room.push(one_room._id);
 
-    // await h.populate('room');
-
     await aa.save();
 
     console.log('h final = ',aa);
@@ -172,7 +161,7 @@ app.post('/addRoom/:id',async (req,res)=>{
     res.redirect(`/hotel/${id}`);
 })
 
-app.post('/addHotel', async (req,res)=>{
+app.post('/addHotel',isloggedin,async (req,res)=>{
     const  {hotelName,hotelLocation,hotelRoomPrice} = req.body;
     const newHotel = new Hotel({
         name:hotelName,
@@ -189,43 +178,7 @@ app.post('/addHotel', async (req,res)=>{
     res.render('hotels.ejs',{allHotel});
 });
 
-const ffs = async (req,res,next) => {
-
-    const {name ,password} = req.body;
-
-    console.log(name,' = ',password);
-
-    const a = await User.findOne({
-        name : name ,
-        password : password
-    })
-
-    console.log(a);
-
-
-    if(a){
-        res.send('ALREADY TAKEN :)');
-    }else{
-        next();
-    }
-};
-
-app.post('/auth',ffs, async (req,res)=>{
-    const {name,password} = req.body;
-    const newUser = new User({
-        name:name,
-        password:password
-    });
-    await newUser.save().then(()=>console.log(req.body));
-
-    const allUser = await User.find();
-
-    console.log(allUser);
-
-    res.render('viewDetails.ejs',{allUser});
-})
-
-app.post('/addComment/:id', async (req,res)=>{
+app.post('/addComment/:id', isloggedin,async (req,res)=>{
     const {id} = req.params;
     console.log('add room kkkkkkkkkkkkkkkkkkkkkkkkkkkkk\n');
     const  {author,body,stars} = req.body;
@@ -257,95 +210,9 @@ app.post('/addComment/:id', async (req,res)=>{
     console.log('h final = ',aa);
 
     res.redirect(`/hotel/${id}`);
-    // res.render('hotel.ejs',{aa});
 });
 
-app.get('/cart',(req,res)=>{
-        
-});
 
 app.listen(3030,()=>{
     console.log('server running :) 3030');
-=======
-const express = require('express');
-const app = express();
-
-app.use(express.json() );       // to support JSON-encoded bodies
-app.use(express.urlencoded({     // to support URL-encoded bodies
-  extended: true
-}));
-
-const User = require('./dbModels/authData');
-
-const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUnifiedTopology: true});
-
-// const Cat = mongoose.model('Cat', { name: String });
-
-// const kitty = new Cat({ name: 'uouo' });
-// kitty.save().then(() => console.log('meow'));
-
-// method overrirde for put , patch , delete ,etc
-const methodOverride = require('method-override')
-app.use(methodOverride('_method'))
-
-
-app.get('/',(req,res)=>{
-    res.render('home.ejs');
-})
-
-app.patch('/auth',(req,res)=>{
-    res.send('UPDATING SOMETHING');
-});
-
-app.get('/auth',(req,res)=>{
-    res.render('auth.ejs');
-});
-
-
-const ffs = async (req,res,next) => {
-    console.log('middle ware hit yooooooo');
-
-    const {name ,password} = req.body;
-
-    const a = await User.find({
-        name : name ,
-        password : password
-    })
-
-    if(a){
-        res.send('ALREADY TAKEN :))))');
-    }else{
-        next();
-    }
-};
-
-app.post('/auth',ffs, async (req,res)=>{
-    const {name,password} = req.body;
-    const newUser = new User({
-        name:name,
-        password:password
-    });
-    await newUser.save().then(()=>console.log(req.body));
-    
-    const allUser = await User.find();
-
-    console.log(allUser);
-
-    res.render('viewDetails.ejs',{allUser});
-})
-
-
-// app.get('/cats',(req,res)=>{
-//     res.send('<h1>catspage</h1>');
-// })
-
-// app.get('/cats/:anyobj',(req,res)=>{
-//     const {anyobj} = req.params;
-//     res.send(`<h1>${anyobj}</h1>`);
-// });
-
-app.listen(3030,()=>{
-    console.log('server running :) 3030');
->>>>>>> f2c1f09bc077b27790ef1b9b84973524df3042f3
 })
