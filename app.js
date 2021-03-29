@@ -3,9 +3,8 @@ const app = express();
 const passport = require('passport');
 const localStrategy = require('passport-local');
 
-const bodyParser = require('body-parser')
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+app.use( express.json() );       // to support JSON-encoded bodies
+app.use( express.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
 
