@@ -99,38 +99,11 @@ app.get('/addRoom/:id', async (req,res)=>{
     res.render('addRoom.ejs',{aa});
 })
 
-app.delete('/room/:hid/:id', async (req,res)=>{
-    const {hid,id} = req.params;
-    console.log('room delete id =',id);
-    await Room.findByIdAndDelete(id);
 
-    const h = Hotel.findById(hid);
-    h.room.filter(id);
-    await h.save();
+app.post('/addRoom/:id',async (req,res)=>{
 
-    res.redirect(`/hotel/${hid}`);
-})
+    console.log('add room ========== post');
 
-app.delete('/hotel/:id',async (req,res)=>{
-    const {hid,id} = req.params;
-    console.log('hotel delete id =',id);
-    await Hotel.findByIdAndDelete(id);
-    res.redirect('/hotels');
-})
-
-app.delete('/comment/:hid/:id', async(req,res)=>{
-    const {id} = req.params;
-    console.log('comment delete id =',id);
-    await Comment.findByIdAndDelete(id);
-
-    const h = Hotel.findById(hid);
-    h.comment.filter(id);
-     h.save();
-
-    res.redirect(`/hotel/${hid}`);
-})
-
-app.post('/addRoom/:id',isloggedin,async (req,res)=>{
     const {id} = req.params;
     console.log('add room kkkkkkkkkkkkkkkkkkkkkkkkkkkkk\n');
     const  {roomName,roomSize,roomPrice} = req.body;
@@ -160,7 +133,9 @@ app.post('/addRoom/:id',isloggedin,async (req,res)=>{
     res.redirect(`/hotel/${id}`);
 })
 
-app.post('/addHotel',isloggedin,async (req,res)=>{
+app.post('/addHotel',async (req,res)=>{
+    console.log('add hotel ========== post');
+
     const  {hotelName,hotelLocation,hotelRoomPrice} = req.body;
     const newHotel = new Hotel({
         name:hotelName,
@@ -177,7 +152,10 @@ app.post('/addHotel',isloggedin,async (req,res)=>{
     res.render('hotels.ejs',{allHotel});
 });
 
-app.post('/addComment/:id', isloggedin,async (req,res)=>{
+app.post('/addComment/:id',async (req,res)=>{
+    
+    console.log('add comment ========== post');
+
     const {id} = req.params;
     console.log('add room kkkkkkkkkkkkkkkkkkkkkkkkkkkkk\n');
     const  {author,body,stars} = req.body;
@@ -210,6 +188,38 @@ app.post('/addComment/:id', isloggedin,async (req,res)=>{
 
     res.redirect(`/hotel/${id}`);
 });
+
+app.delete('/room/:hid/:id', async (req,res)=>{
+    const {hid,id} = req.params;
+    console.log('room delete id =',id);
+    await Room.findByIdAndDelete(id);
+
+    // const h = Hotel.findById(hid);
+    // // h.room.filter(id);
+    // await h.save();
+
+    res.redirect(`/hotel/${hid}`);
+})
+
+app.delete('/comment/:hid/:id', async(req,res)=>{
+    const {hid,id} = req.params;
+    console.log('comment delete id =',id);
+    await Comment.findByIdAndDelete(id);
+
+    // const h = Hotel.findById(hid);
+    // h.comment.filter(id);
+    //  h.save();
+
+    res.redirect(`/hotel/${hid}`);
+})
+
+
+app.delete('/hotel/:id',async (req,res)=>{
+    const {hid,id} = req.params;
+    console.log('hotel delete id =',id);
+    await Hotel.findByIdAndDelete(id);
+    res.redirect('/hotels');
+})
 
 
 app.listen(3030,()=>{
