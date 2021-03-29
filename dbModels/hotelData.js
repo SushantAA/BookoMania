@@ -11,9 +11,20 @@ const hotelSchema = new Schema({
         require:true
     },
     price :{
-        type:Number,
-        require:true
-    }
+        type:Number
+    },
+    room :[
+        {
+            type : Schema.Types.ObjectId,
+            ref : 'Room'
+        }
+    ],
+    comment :[
+        {
+            type : Schema.Types.ObjectId,
+            ref : 'Comment'
+        }
+    ]
 });
 
 module.exports = mongoose.model('Hotel',hotelSchema);

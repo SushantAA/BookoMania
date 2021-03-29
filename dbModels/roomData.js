@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
-const { number } = require('prop-types');
 const Schema = mongoose.Schema;
 
 const roomSchema = new Schema({
-    type:{
+    roomName:{
         type:String,
         require:true
     },
@@ -11,13 +10,11 @@ const roomSchema = new Schema({
         type:Number,
         require:true
     },
-    price:{
+    roomPrice:{
         type:Number,
         require:true
     }
 });
-
-// roomSchema.plugin(passportLocalMongoose);
 
 module.exports = mongoose.model('Room',roomSchema);
 

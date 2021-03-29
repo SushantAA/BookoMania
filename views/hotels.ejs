@@ -3,4 +3,5 @@
 <h2>hotel list </h2>
 <% for(a of allHotel){ %>
     <h4>name = <%= a.name %>  password = <%= a.location %> price:<%=  a.price %> </h4>
+    <a href="/hotel/<%=a._id%>">hotel <%= a.name %> details</a>
 <% } %>

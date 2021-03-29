@@ -1,1 +1,48 @@
 <h1>1 hotel</h1>
+<h3><%= aa.name %></h3>
+<h3><%= aa.location %></h3>
+<h3><%= aa.price %></h3>
+
+<h1>Room</h1>
+<% for(a of aa.room) { %>
+    <h4>a = <%=a%></h4>
+<%}%>
+
+<form action="/addRoom/<%=aa._id%>" method="POST" >
+    <div>
+        <label for="roomName">roomName</label>
+        <input type="text" name="roomName" id="roomName">
+    </div>
+    <div>
+        <label for="roomSize">roomSize</label>
+        <input type="number" name="roomSize" id="roomSize">
+    </div>
+    <div>
+        <label for="roomPrice">roomPrice</label>
+        <input type="number" name="roomPrice" id="roomPrice">
+    </div>
+    <button>add</button>
+</form>
+
+<h1>Comments</h1>
+
+<% for(a of aa.comment) { %>
+    <h4>a = <%=a%></h4>
+<%}%>
+
+
+<form action="/addComment/<%=aa._id%>" method="POST" >
+    <div>
+    <label name="author" >author</label>
+    <input type="text" name="author" id="author">
+    </div>
+    <div>
+        <label name="body" >body</label>
+        <input type="text" name="body" id="body">
+    </div>
+    <div>
+        <label name="stars" >stars</label>
+        <input type="number" name="stars" id="stars">
+    </div>
+    <button>Add Comment</button>
+</form>
