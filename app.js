@@ -28,20 +28,73 @@ passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-const isloggedin = (req,res,next) => {
-    console.log('req.isAuthenticated =' ,req.isAuthenticated());
-    if(req.isAuthenticated()){
+
+let userId = undefined ;
+let redirectUrl = undefined;
+
+const isloggedin = async (req,res,next) => {
+    // console.log('req.isAuthenticated =' ,req.isAuthenticated());
+    if(userId){
          next();
     }else{
+        userId = undefined;
        return res.redirect('/login');
     }
 }
+
+const isHotelAuthor = async (req,res,next) => {
+    const {hid} = req.params;
+    const aa = await Hotel.findById(hid);
+
+    const a = String(userId);
+    const b = String(aa.hotelauthor);
+
+    if(a==b){
+         next();
+    }else{
+       return res.redirect('/');
+    }
+}
+
+const isCommentAuthor = async (req,res,next) => {
+    const {hid,cid} = req.params;
+    const aa = await Comment.findById(cid);
+    console.log(userId,'==========AAAAAAAAAAAAAAAAA===============',aa.author);
+    
+    const a = String(userId);
+    const b = String(aa.author);
+    console.log(`a=${a}`);
+    console.log(`b=${b}`);
+    if(a==b){
+    // if(userId == aa.author){
+         next();
+         return;
+    }else{
+       return res.redirect(`/hotel/${hid}`);
+    }
+}
+
+
+app.get('/me', isloggedin ,async (req,res)=>{
+    redirectUrl = '/me';
+    // res.send('pppppp');
+    console.log('user =',req.user);
+
+    const u = await  User.findById(userId);
+
+    if(u){
+        res.render('user.ejs',{u});
+    }else{
+    res.send('sssss = ' + u);
+    }
+});
 
 app.get('/register',(req,res)=>{
     res.render('register.ejs');
 })
 
 app.post('/register',async(req,res)=>{
+    console.log('register user =',req.user);
     console.log('ppppppppppppppppppppppppppppppp\n');
     const {userName,password,email} = req.body;
     const user = new User({email:email,username:userName});
@@ -51,15 +104,24 @@ app.post('/register',async(req,res)=>{
 })
 
 app.get('/login',(req,res)=>{
+    // console.log('login user =',passport.user);
     res.render('login.ejs');
 })
 
 app.post('/login',passport.authenticate('local',{failureFlash:true   ,failureRedirect:'/login'}),(req,res)=>{
  // logged
+ console.log('req.user =', req.user);
+ userId = req.user._id;
+    // res.send(req.user.username);
+    if(redirectUrl){
+        res.redirect(redirectUrl);
+    }else{
     res.redirect('/');
+    }
 });
 
 app.get('/logout',(req,res)=>{
+    userId = undefined;
     req.logout();
     res.redirect('/');
 });
@@ -76,16 +138,16 @@ app.get('/hotels',async (req,res)=>{
     res.render('hotels.ejs',{allHotel});
 });
 
-app.get('/hotel/:id', async (req,res)=>{
-    const {id} = req.params;
-    console.log('id = ',id);
-    const aa = await Hotel.findById(id).populate(['room','comment']);
+app.get('/hotel/:hid', async (req,res)=>{
+    const {hid} = req.params;
+    console.log('1 id = ',hid);
+    const aa = await Hotel.findById(hid).populate(['room','comment']);
     console.log('h = ',aa);
     res.render('hotel.ejs',{aa});
 })
 
-app.get('/addHotel', async (req,res)=>{
-
+app.get('/addHotel', isloggedin,async (req,res)=>{
+redirectUrl = '/addHotel';
     const allRoom = await Room.find();
 
     console.log(allRoom);
@@ -93,9 +155,9 @@ app.get('/addHotel', async (req,res)=>{
     res.render('addHotel.ejs',{allRoom});
 })
 
-app.get('/addRoom/:id', async (req,res)=>{
-    const {id} = req.params;
-    const aa = await Hotel.findById(id);
+app.get('/addRoom/:hid', isloggedin , isHotelAuthor ,async (req,res)=>{
+    const {hid} = req.params;
+    const aa = await Hotel.findById(hid);
     res.render('addRoom.ejs',{aa});
 })
 
@@ -138,9 +200,9 @@ app.post('/addHotel',async (req,res)=>{
 
     const  {hotelName,hotelLocation,hotelRoomPrice} = req.body;
     const newHotel = new Hotel({
+        hotelauthor:userId,
         name:hotelName,
         location:hotelLocation,
-        price:hotelRoomPrice
     });
 
     await newHotel.save().then(()=>console.log(req.body));
@@ -152,15 +214,16 @@ app.post('/addHotel',async (req,res)=>{
     res.render('hotels.ejs',{allHotel});
 });
 
-app.post('/addComment/:id',async (req,res)=>{
+app.post('/addComment/:hid',isloggedin,async (req,res)=>{
     
     console.log('add comment ========== post');
 
-    const {id} = req.params;
+    const {hid} = req.params;
+redirectUrl = `/addComment/${hid}`;
     console.log('add room kkkkkkkkkkkkkkkkkkkkkkkkkkkkk\n');
     const  {author,body,stars} = req.body;
     const newComment = new Comment({
-        author:author,
+        author:userId,
         body:body,
         stars:stars
     });
@@ -168,7 +231,7 @@ app.post('/addComment/:id',async (req,res)=>{
     await newComment.save().then(()=>console.log(req.body));
 
     const one_comment = await Comment.findOne({
-        author:author,
+        author:userId,
         body:body,
         stars:stars
     });
@@ -176,21 +239,20 @@ app.post('/addComment/:id',async (req,res)=>{
     console.log(one_comment._id);
 
 
-    const aa = await Hotel.findById(id);
+    const aa = await Hotel.findById(hid);
 
     aa.comment.push(one_comment._id);
-
-    // await h.populate('room');
-
     await aa.save();
 
     console.log('h final = ',aa);
 
-    res.redirect(`/hotel/${id}`);
+    res.redirect(`/hotel/${hid}`);
 });
 
-app.get('/addHotel/:hid', async (req,res)=>{
+app.get('/addHotel/:hid',isloggedin,async (req,res)=>{
     const {hid} = req.params;
+redirectUrl = `/addHotel/${hid}`;
+
     const aa = await Hotel.findById(hid);
     res.render('hoteEdit.ejs',{aa});
 })
@@ -209,9 +271,28 @@ app.patch('/addHotel/:hid',async  (req,res)=>{
 })
 
 
+app.post('/userroom/:hid/:rid', isloggedin ,async (req,res)=>{
+    const {hid,rid} = req.params;
+    redirectUrl = `/userroom/${hid}/${rid}`;
 
-app.delete('/room/:hid/:id', async (req,res)=>{
+    const a = {hotel : hid, room : rid};
+
+    const u = await User.findById(userId);
+
+    u.hotelroom.push(a);
+
+    await u.save();
+
+    res.redirect('/me');
+
+    res.redirect(`/hotel/${hid}`);
+})
+
+
+app.delete('/room/:hid/:id',isloggedin,isHotelAuthor,async (req,res)=>{
     const {hid,id} = req.params;
+    redirectUrl = `/room/${hid}/${rid}`;
+
     console.log('room delete id =',id);
     await Room.findByIdAndDelete(id);
 
@@ -222,23 +303,26 @@ app.delete('/room/:hid/:id', async (req,res)=>{
     res.redirect(`/hotel/${hid}`);
 })
 
-app.delete('/comment/:hid/:id', async(req,res)=>{
-    const {hid,id} = req.params;
-    console.log('comment delete id =',id);
-    await Comment.findByIdAndDelete(id);
+
+app.delete('/comment/:hid/:cid', isloggedin ,isCommentAuthor,async(req,res)=>{
+    const {hid,cid} = req.params;
+    console.log('=============uuuuuuu=================uuuu============');
+    console.log('comment delete id =',cid);
+    await Comment.findByIdAndDelete(cid);
 
     // const h = Hotel.findById(hid);
-    // h.comment.filter(id);
-    //  h.save();
+    // h.comment.filter(cid);
+    // h.save(); 
 
     res.redirect(`/hotel/${hid}`);
 })
 
 
-app.delete('/hotel/:id',async (req,res)=>{
-    const {hid,id} = req.params;
-    console.log('hotel delete id =',id);
-    await Hotel.findByIdAndDelete(id);
+app.delete('/hotel/:hid',isloggedin,isHotelAuthor,async (req,res)=>{
+    const {hid} = req.params;
+    redirectUrl = `/hotel/${hid}`;
+    console.log('hotel delete id =',hid);
+    await Hotel.findByIdAndDelete(hid);
     res.redirect('/hotels');
 })
 

@@ -10,8 +10,9 @@ const hotelSchema = new Schema({
         type:String,
         require:true
     },
-    price :{
-        type:Number
+    hotelauthor :{
+        type : Schema.Types.ObjectId,
+        ref : 'User'
     },
     room :[
         {
