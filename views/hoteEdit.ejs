@@ -1,0 +1,12 @@
+<h1>add hotel form</h1>
+<form action="/addHotel/<%=aa._id%>?_method=PATCH" method="POST">
+    <div>
+        <label for="hotelName">hotelName</label>
+        <input type="text" name="hotelName" id="hotelName" value="<%=aa.name%>" >
+    </div>
+    <div>
+        <label for="hotelLocation">hotelLocation</label>
+        <input type="text" name="hotelLocation" id="hotelLocation" value="<%=aa.location%>" >
+    </div>
+    <button>submit</button>
+</form>

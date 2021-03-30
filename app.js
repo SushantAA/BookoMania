@@ -189,6 +189,27 @@ app.post('/addComment/:id',async (req,res)=>{
     res.redirect(`/hotel/${id}`);
 });
 
+app.get('/addHotel/:hid', async (req,res)=>{
+    const {hid} = req.params;
+    const aa = await Hotel.findById(hid);
+    res.render('hoteEdit.ejs',{aa});
+})
+
+app.patch('/addHotel/:hid',async  (req,res)=>{
+
+    const {hotelName,hotelLocation} = req.body;
+    const {hid} = req.params;
+    const aa = await Hotel.findById(hid);
+    aa.location = hotelLocation;
+    aa.name = hotelName;
+    await aa.save();
+    res.redirect(`/hotel/${hid}`);
+    // res.render('hoteEdit.ejs',{aa});
+    // res.send('patch of hotel');
+})
+
+
+
 app.delete('/room/:hid/:id', async (req,res)=>{
     const {hid,id} = req.params;
     console.log('room delete id =',id);
