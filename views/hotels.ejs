@@ -1,3 +1,5 @@
+<%- include("partials/header") -%> 
+
 <h1>yo all hotels</h1>
 <a href="/logout">logout</a>
 <a href="/addHotel">addHotel</a>
@@ -6,3 +8,5 @@
     <h4>name = <%= a.name %>  location = <%= a.location %> </h4>
     <a href="/hotel/<%=a._id%>">hotel <%= a.name %> details</a>
 <% } %>
+
+<%- include("partials/footer") -%> 

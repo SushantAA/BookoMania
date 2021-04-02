@@ -1,0 +1,28 @@
+*{
+	margin:0;
+	padding:0;
+	box-sizing: border-box;
+}
+
+.footer-section{
+    background-color: antiquewhite;
+}
+
+/* containers */
+
+.container-fluid{
+    padding:7% 15%;
+}
+
+/* footer */
+
+.contact-icon{
+    margin:2% 1%;
+    cursor:pointer;
+    transition:1s;
+}
+
+.contact-icon:hover{
+    width:2rem;
+    height:2rem;
+}
