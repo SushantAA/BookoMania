@@ -108,6 +108,13 @@ app.get('/login',(req,res)=>{
     res.render('login.ejs');
 })
 
+app.get('/pay/:hid/:rid', async (req,res)=>{
+    const {hid,rid} = req.params;
+    let ah = await Hotel.findById(hid);
+    let ar = await Room.findById(rid);
+    res.render('pay.ejs',{ah,ar});
+})
+
 app.post('/login',passport.authenticate('local',{failureFlash:true   ,failureRedirect:'/login'}),(req,res)=>{
  // logged
  console.log('req.user =', req.user);
