@@ -1,21 +1,90 @@
-<h1>login</h1>
-<a href="/register">GOT TO REGISTER</a> 
-<form action="/login" method="POST" >
-    <div>
-        <label for="username">username</label>
-        <input type="text" name="username" id="username">
-    </div>
-    
-    <div>
-        <label for="email">email</label>
-        <input type="email" name="email" id="email">
-    </div>
-    
-    <div>
-        <label for="password">password</label>
-        <input type="password" name="password" id="password">
-    </div>
+<%- include("partials/header") -%> 
+<link rel="stylesheet" href="/css/login-signup.css">
+</head>
+<body>
 
-    <button>login</button>
+<div class="container" id="container">
+    <div class="form-container sign-up-container">
+		<form action="/register" method="POST">
+			<h1>Create Account</h1>
+			<!-- <div class="social-container">
+				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+				<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+			</div> -->
+            
+			<div>
+                <label for="userName">userName</label>
+                <input type="text" name="userName" id="userName">
+            </div>
+            
+            <div>
+                <label for="email">email</label>
+                <input type="email" name="email" id="email">
+            </div>
+            
+            
+            <div>
+                <label for="password">password</label>
+                <input type="password" name="password" id="password">
+            </div>
+            
+            <button>register</button>
+		</form>
+	</div>
+	<div class="form-container sign-in-container">
+		<form action="/login" method="POST">
+			<h1>Sign in</h1>
+			<!-- <div class="social-container">
+				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+				<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+			</div> -->
+            <div>
+                <label for="username">username</label>
+                <input type="text" name="username" id="username">
+            </div>
+            
+            <div>
+                <label for="email">email</label>
+                <input type="email" name="email" id="email">
+            </div>
+            
+            <div>
+                <label for="password">password</label>
+                <input type="password" name="password" id="password">
+            </div>
+        
+            <button>login</button>
+		</form>
+	</div>
+	<div class="overlay-container">
+		<div class="overlay">
+            <div class="overlay-panel overlay-left">
+				<h1>Welcome Back!</h1>
+				<p>To keep connected with us please login with your personal info</p>
+				<button class="ghost" id="signIn">Sign In</button>
+			</div>
+			<div class="overlay-panel overlay-right">
+				<h1>Hello, Friend!</h1>
+				<p>Enter your personal details and start journey with us</p>
+				<button class="ghost" id="signUp">Sign Up</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+    const signUpButton = document.getElementById('signUp');
+    const signInButton = document.getElementById('signIn');
+    const container = document.getElementById('container');
     
-</form>
+    signUpButton.addEventListener('click', () => {
+        container.classList.add("right-panel-active");
+    });
+    
+    signInButton.addEventListener('click', () => {
+        container.classList.remove("right-panel-active");
+    });
+</script>
+<%- include("partials/footer") -%> 

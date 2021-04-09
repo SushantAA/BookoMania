@@ -1,8 +1,14 @@
+<%- include("partials/header") -%> 
+<link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
 <h1>USER</h1>
 <h4>name = <%=u.username%> </h4>
 <h4>email = <%=u.email%> </h4>
 <% for(a of u.hotelroom ){ %>
     <h5>hotel : <%=a.hotel%></h5>
     <h5>room : <%=a.room%> </h5>
-    <a href="/pay/<%=a.hote%>/<%=a.room%>">pay</a>
 <% } %>
+
+<%- include("partials/footer") -%> 

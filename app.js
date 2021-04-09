@@ -7,6 +7,7 @@ app.use( express.json() );       // to support JSON-encoded bodies
 app.use( express.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
+app.use( express.static("public"));
 
 const Hotel = require('./dbModels/hotelData');
 const Room = require('./dbModels/roomData');
@@ -15,6 +16,7 @@ const User = require('./dbModels/User');
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.set("useCreateIndex",true);
 
 // method overrirde for put , patch , delete ,etc
 const methodOverride = require('method-override');
