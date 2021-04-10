@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router({mergeParams : true});
-const Campground = require('../models/Campground');
+const Hotel = require('../models/Campground');
 const catchAsync = require('../utilities/catchAsync');
 const expresError = require('../utilities/expressError');
 const {reviewSchema}  = require('../schemas');
@@ -57,13 +57,17 @@ const validateReview = (req,res,next) => {
 }
 
 
-router.post('/', isLogedin ,validateReview ,async (req,res)=>{
+router.post('/', isLogedin ,async (req,res)=>{
+    console.log("sdddddddddddddd");
     const id = req.params.id;
-    const Campground = await Campground.findById(req.params.id);
+    const Campground = await Hotel.findById(req.params.id);
     const review = new Review(req.body.review);
     review.author = req.user._id;
 
     Campground.reviews.push(review);
+
+    console.log( 'review sdfsdfsdf = ' ,review);
+    console.log('camp sdfsdfsdfsd = ',Campground);
 
     await review.save();
     await Campground.save();
@@ -76,11 +80,12 @@ router.post('/', isLogedin ,validateReview ,async (req,res)=>{
 
 router.delete('/:reviewId',isReviewAuthor,async (req,res) => {
     const {id,reviewId} = req.params;
-    await Campground.findByIdAndUpdate(id,{ $pull : {reviews : reviewId}});
+    console.log('eeeeeeeeeeeeeeeeeeeeeee\n');
+    await Hotel.findByIdAndUpdate(id,{ $pull : {reviews : reviewId}});
     await Review.findByIdAndDelete(reviewId);
     req.flash('success','succesfully deleted');
     res.redirect(`/cg/${id}`);
-    // res.send('sdfsfdf');
+    // res.send ('sdfsfdf');
 });
 
 module.exports = router;

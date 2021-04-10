@@ -141,11 +141,18 @@ router.get('/:id/edit',isLogedin , isAuthor ,catchAsync( async (req,res) => {
     res.render('cg/edit',{a});
 }));
 
-
-router.get('/:hid/book',(req,res) => {
+router.get('/:hid/book', async (req,res) => {
     const {hid} = req.params;
+    res.render('pay',{hid})
+});
+
+router.post('/:hid/book', async (req,res) => {
+    const {hid} = req.params;
+    const h = await Campground.findById(hid);
     let a =  req.user;
-    res.send(`asdfdsf ${a}`);
+    a.booking.push(hid);
+    await a.save();
+    res.send(`asdfdsf ${a} h = ${h}`);
 });
 
 
@@ -169,7 +176,6 @@ router.get('/:id', catchAsync( async (req,res) => {
         req.flash('error','cannot find mapper');
         return  res.redirect('/cg');
     }
-    // console.log(a);
     res.render('cg/show_detail',{a});
 }));
 

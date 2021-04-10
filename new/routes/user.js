@@ -1,5 +1,6 @@
 const express = require('express');
 const passport = require('passport');
+const Campground = require('../models/Campground');
 const router =  express.Router();
 const User = require('../models/user');
 const catchAsync = require('../utilities/catchAsync');
@@ -37,9 +38,15 @@ router.post('/login', passport.authenticate('local', { failureFlash : true , fai
     res.redirect(redirectUrl);
 }));
 
-router.get('/me',(req,res)=>{
+router.get('/me',async (req,res)=>{
     const user = req.user;
-    res.render('users/me',{user});
+    await user.populate(['booking']);
+    let arr = [];
+    for( a of user.booking){
+        const b = await Campground.findById(a);
+        arr.push(b);
+    }
+    res.render('users/me',{user,arr});
 });
 
 router.get('/logout',(req,res)=> {
