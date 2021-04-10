@@ -1,11 +1,11 @@
 body{
     height: 100vh;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url(../image/a.jpg);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+    url(../image/hotel_medium.jpg);
     background-size: cover;
     background-position: center;
-    text-shadow: 0 0.05rem 0.1rem rgba(0, 0, 0, 0.5);
-    box-shadow: inset 0 0 5rem rgba(0, 0, 0, 0.5);
+    text-shadow: 0 0.01rem 0.1rem rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 0 1rem rgba(0, 0, 0, 0.5);
 }
 
 .header{
