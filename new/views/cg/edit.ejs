@@ -6,12 +6,16 @@
         background: -webkit-linear-gradient(to right, #FFC371, #FF5F6D);  /* Chrome 10-25, Safari 5.1-6 */
         background: linear-gradient(to right, #FFC371, #FF5F6D); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     }
+    .row>.input-group{
+        padding-left: 0;
+        padding-right: 0;
+    }
 </style>
     <div class="container">
     <div class="row justify-content-center ">
-        <h1 class="text-center">Edit Mappe</h1>
+        <h1 class="text-center">Edit Hotel</h1>
         <div class="col-6" >
-    <form action="/cg/<%=a._id%>?_method=PUT" method="POST" novalidate class="new-edit-validation"
+    <form action="/cg/<%=a._id%>?_method=PUT" method="POST" class="needs-validation" novalidate
         enctype="multipart/form-data" >
         
                 <div class=" row mb-3 justify-content-center ">
@@ -25,7 +29,7 @@
                 </div>
         
                 <div class="row mb-3 justify-content-center">
-                    <h5 for="formGroupExampleInput" class="form-label">Discription</h5>
+                    <h5 for="formGroupExampleInput" class="form-label">Description</h5>
                     <textarea class="form-control justify-content-center" name="discription" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" required><%=a.discription%></textarea>
                 </div>
                 
@@ -40,7 +44,7 @@
         
                 <div class="row mb-3 justify-content-center">
                     <div class="input-group">
-                      <div class="input-group-text">$</div>
+                      <div class="input-group-text">Price $</div>
                       <input type="number" name="price" class="form-control justify-content-center" id="autoSizingInputGroup" placeholder="0.0" value="<%=a.price%>" required>
                     </div>
                 </div>
@@ -62,3 +66,5 @@
         </div>
         </div>
         </div>
+
+        <script src="/scripts/form_validate.js" ></script>

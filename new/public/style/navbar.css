@@ -1,5 +1,5 @@
 #navbar1{
-    background-color: #49c0b6;
+    background-color: #ffb555;
     color: #ff304f;
 }
 
@@ -7,6 +7,48 @@
   color: #ff304f;
 }
 
-.nav_link{
-    color: #0c3866;
+.navbar-toggler-icon{
+  background-image:url(/image/toggle-icon.svg) ;
+}
+
+.anchor-nav{
+    color: #18181a;
+}
+
+.footer-padding {
+  padding-bottom: 2rem;
+}
+
+.bgcolor{
+background-color:#ffb555;
+}
+
+.footer {
+  font-size: 14px;
+  text-align: center;
+  width: 100%;
+}
+
+.footer p {
+  margin: 10px 0;
+}
+
+.footer i {
+  color: red;
+}
+
+.footer a {
+  color: #3c97bf;
+  text-decoration: none;
+}
+
+.contact-icon{
+  margin:2% 1%;
+  cursor:pointer;
+  transition:1s;
+}
+
+.contact-icon:hover{
+  width:2rem;
+  height:2rem;
 }
