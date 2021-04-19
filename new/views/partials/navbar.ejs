@@ -10,13 +10,15 @@
       <div class="navbar-nav">
         <a class="nav-link anchor-nav" aria-current="page" href="/cg">HOME</a>
         <a class="nav-link anchor-nav" href="/cg/new">NEW</a>
+        <!-- <a class="nav-link anchor-nav" href="/cg/map">View Map</a> -->
       </div>
-      <div class="navbar-nav">
+      <div class="navbar-nav ms-auto">
         <% if(!currentUser){ %>
           <a class="nav-link anchor-nav" href="/login">Login</a>
           <a class="nav-link anchor-nav" href="/register">Register</a>
         <% } else { %>
           <a class="nav-link anchor-nav" href="/logout">Logout</a>
+          <a class="nav-link anchor-nav" href="/me">ME</a>
         <% }%>
       </div>
     </div>

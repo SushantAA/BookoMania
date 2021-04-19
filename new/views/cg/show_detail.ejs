@@ -1,9 +1,10 @@
 <% layout('layout/boilerplate') %>
+<link rel="stylesheet" href="/style/star_logic.css">
 
     <div class="row mb-3" >
       <div class="col-lg-6 col-sm-12">
       <!-- <h1 class="text-center">DETAILS</h1> -->
-      <div class="card"">
+      <div class="card">
 
 
         <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
@@ -58,7 +59,7 @@
           <div>
             <form action="/cg/<%=a._id%>/reviews" method="POST" novalidate class="new-edit-validation" >
             
-            <h5>Give Rating:</h5>
+            <h5 style="color:#fff">Give Rating:</h5>
 
             <fieldset class="starability-basic ">
               <legend></legend>
