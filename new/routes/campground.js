@@ -84,6 +84,12 @@ router.get('/', catchAsync( async (req,res) => {
     res.render('cg/index',{all_cg})
 }));
 
+router.get('/map', catchAsync( async (req,res) => {
+    const all_cg = await Campground.find({});
+    // res.send(all_cg);
+    res.render('cg/map',{all_cg})
+}));
+
 router.post('/', isLogedin ,upload.array('image'),validatecg ,catchAsync( async (req,res) => {
     
     const geoData = await geocoder.forwardGeocode({
