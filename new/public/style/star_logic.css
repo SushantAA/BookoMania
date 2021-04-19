@@ -1,4 +1,13 @@
-.starability-result {
+  body{
+    height: 100%;
+    margin: 0;
+    background: url(/image/background.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+
+  .starability-result {
     position: relative;
     width: 150px;
     height: 30px;
@@ -108,7 +117,7 @@
   
   .starability-basic > label {
     position: relative;
-    display: inline-block;
+    /* display: inline-block; */
     float: left;
     width: 30px;
     height: 30px;

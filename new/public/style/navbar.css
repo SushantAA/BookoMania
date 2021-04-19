@@ -1,9 +1,15 @@
 #navbar1{
+<<<<<<< HEAD
   background: #F7971E;  /* fallback for old browsers */
   background: -webkit-linear-gradient(to right, #FFD200, #F7971E);  /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to right, #FFD200, #F7971E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   
     color: #ff304f;
+=======
+    /* background-color: #ffb555;
+    color: #ff304f; */
+    background-color: transparent;
+>>>>>>> 27ee0d32989051c745f389db2fef986b77800ecd
 }
 
 #navlink1{
@@ -15,7 +21,7 @@
 }
 
 .anchor-nav{
-    color: #18181a;
+    color: #fff;
 }
 
 .footer-padding {
@@ -23,7 +29,8 @@
 }
 
 .bgcolor{
-background-color:#ffb555;
+/* background-color:#ffb555; */
+background-color: transparent;
 }
 
 .footer {
@@ -32,8 +39,9 @@ background-color:#ffb555;
   width: 100%;
 }
 
-.footer p {
+.footer div p {
   margin: 10px 0;
+  color: #fff;
 }
 
 .footer i {
@@ -46,6 +54,7 @@ background-color:#ffb555;
 }
 
 .contact-icon{
+  color: #fff;
   margin:2% 1%;
   cursor:pointer;
   transition:1s;

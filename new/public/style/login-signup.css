@@ -27,10 +27,16 @@ nav{
     width:100%;
 }
 
-/* #navbar1{
-    margin-top:40px;
-} */
-div>a{
+.anchor-nav {
+	color: #000;
+	text-decoration: none;
+}
+
+a{
+	text-decoration: none;
+}
+
+div>.anchor-nav,div>a{
     margin-top:50px !important;
 }
 
@@ -46,17 +52,14 @@ span {
 	font-size: 12px;
 }
 
-a {
-	color: #333;
-	font-size: 14px;
-	text-decoration: none;
-	margin: 15px 0;
-}
+
 
 button {
 	border-radius: 20px;
-	border: 1px solid #f88c10;
-	background-color: #f88c10;
+	/* border: 1px solid #f88c10;
+	background-color: #f88c10; */
+	border: 1px solid #FF4B2B;
+	background-color: #FF4B2B;
 	color: #FFFFFF;
 	display:inline-block;
 	font-size: 12px;
@@ -180,9 +183,12 @@ input {
 }
 
 .overlay {
-	background: #f88c10;
+	/* background: #f88c10;
 	background: -webkit-linear-gradient(to right, #FF4B2B,#f88c10, #fc9b09,#FF4B2B);
-	background: linear-gradient(to right,#FF4B2B, #f88c10, #fc9b09,#FF4B2B);
+	background: linear-gradient(to right,#FF4B2B, #f88c10, #fc9b09,#FF4B2B); */
+	background: #FF416C;
+	background: -webkit-linear-gradient(to right, #FF4B2B, #FF416C);
+	background: linear-gradient(to right, #FF4B2B, #FF416C);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: 0 0;
@@ -251,7 +257,8 @@ input {
 }
 
 .bgcolor{
-	background-color:#ffb555;
+	/* background-color:#ffb555; */
+	background-color: transparent;
 }
 
 .footer {
@@ -265,15 +272,15 @@ input {
     z-index: 999; */
 }
 
-.footer p {
+.footer div p {
     margin: 10px 0;
 }
 
-.footer i {
-    color: red;
+.footer div i {
+    color: #fff;
 }
 
-.footer a {
+.footer div a {
     color: #3c97bf;
     text-decoration: none;
 }
