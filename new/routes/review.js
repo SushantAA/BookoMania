@@ -72,7 +72,7 @@ router.post('/', isLogedin ,async (req,res)=>{
     await review.save();
     await Campground.save();
 
-    req.flash('success','succesfully add review to mapper');
+    req.flash('success','succesfully add review to Hotel');
 
     res.redirect(`/cg/${Campground._id}`);
 

@@ -3,8 +3,13 @@
 *{
 	box-sizing: border-box;
 }
+
 body {
 	background: #f6f5f7;
+	background: url(/image/droplet.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -28,7 +33,7 @@ nav{
 }
 
 .anchor-nav {
-	color: #000;
+	color: #fff;
 	text-decoration: none;
 }
 
@@ -52,12 +57,8 @@ span {
 	font-size: 12px;
 }
 
-
-
 button {
 	border-radius: 20px;
-	/* border: 1px solid #f88c10;
-	background-color: #f88c10; */
 	border: 1px solid #FF4B2B;
 	background-color: #FF4B2B;
 	color: #FFFFFF;
@@ -183,9 +184,6 @@ input {
 }
 
 .overlay {
-	/* background: #f88c10;
-	background: -webkit-linear-gradient(to right, #FF4B2B,#f88c10, #fc9b09,#FF4B2B);
-	background: linear-gradient(to right,#FF4B2B, #f88c10, #fc9b09,#FF4B2B); */
 	background: #FF416C;
 	background: -webkit-linear-gradient(to right, #FF4B2B, #FF416C);
 	background: linear-gradient(to right, #FF4B2B, #FF416C);
@@ -265,11 +263,6 @@ input {
     font-size: 14px;
     text-align: center;
     width: 100%;
-    /* bottom: 0;
-	position: fixed;
-    left: 0;
-    right: 0;
-    z-index: 999; */
 }
 
 .footer div p {

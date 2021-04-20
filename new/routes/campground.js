@@ -107,7 +107,7 @@ router.post('/', isLogedin ,upload.array('image'),validatecg ,catchAsync( async 
     a.author = req.user._id;
     await a.save();
     console.log(a);
-    req.flash('success','successfully made new mapper');
+    req.flash('success','successfully made new Hotel');
     res.redirect('/cg');
 }));
 
@@ -136,7 +136,7 @@ router.put('/:id',isAuthor, upload.array('image') ,catchAsync( async(req,res,nex
     const arr = req.files.map(f => ({ url: f.path,filename: f.filename }));
     a.image.push(...arr);
     await a.save();
-    req.flash('success','succesfully updated mapper');
+    req.flash('success','succesfully updated Hotel');
     res.redirect(`/cg/${id}`);
 }));
 
@@ -158,14 +158,15 @@ router.post('/:hid/book', async (req,res) => {
     let a =  req.user;
     a.booking.push(hid);
     await a.save();
-    res.send(`asdfdsf ${a} h = ${h}`);
+    res.redirect('/me');
+    // res.send(`asdfdsf ${a} h = ${h}`);
 });
 
 
 router.delete('/:id',isAuthor ,catchAsync( async (req,res) => {
     const {id} = req.params;
     await Campground.findByIdAndDelete(id);
-    req.flash('success','succesfully deleted mapper');
+    req.flash('success','succesfully deleted Hotel');
     res.redirect(`/cg`);
 }));
 
@@ -179,7 +180,7 @@ router.get('/:id', catchAsync( async (req,res) => {
     }).populate('author'));
     console.log(a);
     if(!a){
-        req.flash('error','cannot find mapper');
+        req.flash('error','cannot find Hotel');
         return  res.redirect('/cg');
     }
     res.render('cg/show_detail',{a});
