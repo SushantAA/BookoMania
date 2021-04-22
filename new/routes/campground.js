@@ -147,19 +147,20 @@ router.get('/:id/edit',isLogedin , isAuthor ,catchAsync( async (req,res) => {
     res.render('cg/edit',{a});
 }));
 
-router.get('/:hid/book', async (req,res) => {
+router.post('/:hid/book', async (req,res) => {
     const {hid} = req.params;
-    res.render('pay',{hid})
+    const {num} = req.body;
+    const hh = await Campground.findById(hid);
+    res.render('pay',{hh,hid,num})
 });
 
-router.post('/:hid/book', async (req,res) => {
+router.post('/:hid/done', async (req,res) => {
     const {hid} = req.params;
     const h = await Campground.findById(hid);
     let a =  req.user;
     a.booking.push(hid);
     await a.save();
     res.redirect('/me');
-    // res.send(`asdfdsf ${a} h = ${h}`);
 });
 
 
