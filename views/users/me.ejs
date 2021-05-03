@@ -1,0 +1,27 @@
+<% layout('layout/boilerplate') %> 
+<link rel="stylesheet" href="/style/me.css">
+<h1 style="color:#fff">ME</h1>
+<div class="card user-card">
+    <img src="/image/user_img.png" alt="User icon" class="icon">
+    <h2>Username =  <%=user.username%></h2>
+    <h2>Email =  <%=user.email%></h2>
+</div>
+<h2 class="center">Bookings</h2>
+<div class="row">
+<% for(a of arr) {%>
+    <div class="col-lg-4 col-md-6 mb-5">
+        <div class="card">
+            <!-- <div class="card-header upcard">
+                <h6>Price = $ <%=a.price%></h6>
+            </div> -->
+            <div class="card-body">
+                <h5 class="card-title">Hotelname = <%=a.title%></h5>
+                <p class="card-text">Location = <%=a.location%></p>
+            </div>
+            <div class="d-grid gap-2">
+            <a href="/hotel/<%=a._id%>" class="btn btn-sm btn-info">link</a>
+            </div>
+        </div>
+    </div>
+<% } %>
+</div>

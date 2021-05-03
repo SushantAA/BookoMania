@@ -1,341 +1,122 @@
+if(process.env.NODE_ENV !== "production"){
+    require('dotenv').config();
+}
+
 const express = require('express');
-const app = express();
-const passport = require('passport');
-const localStrategy = require('passport-local');
-
-app.use( express.json() );       // to support JSON-encoded bodies
-app.use( express.urlencoded({     // to support URL-encoded bodies
-  extended: true
-}));
-app.use( express.static("public"));
-
-const Hotel = require('./dbModels/hotelData');
-const Room = require('./dbModels/roomData');
-const Comment = require('./dbModels/commentData');
-const User = require('./dbModels/User');
-
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUnifiedTopology: true});
-mongoose.set("useCreateIndex",true);
+const path = require('path');
+const Hotel = require('./models/hotel');
+const methodOverride = require('method-override');;
+const ejsMate = require('ejs-mate');
+const { type } = require('os');
+const catchAsync = require('./utilities/catchAsync');
+const expresError = require('./utilities/expressError');
+const Joi = require('joi');
+const { required } = require('joi');
+const { validate } = require('./models/hotel');
+const flash = require('connect-flash');
+const session = require('express-session');
 
-// method overrirde for put , patch , delete ,etc
-const methodOverride = require('method-override');
-app.use(methodOverride('_method'))
+const helmet = require('helmet');
+
+const mongoSanitize = require('express-mongo-sanitize');
+
+const  passport = require('passport');
+const LocalStrategy = require('passport-local');
+
+const Hotel_router = require('./routes/hotel');
+const review_router = require('./routes/review');
+
+const app = express();
+const User = require('./models/user');
+
+const userRoutes = require('./routes/user');
+const { contentSecurityPolicy } = require('helmet');
+
+const MongoStore = require('connect-mongo')(session);
+
+// const dbUrl = 'mongodb://localhost:27017/mapper';
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/mapper';
+mongoose.connect( dbUrl , {useNewUrlParser: true, useUnifiedTopology: true , useCreateIndex : true , useFindAndModify: false});
+const db = mongoose.connection;
+db.on("error",console.error.bind(console , "connection err:"));
+db.once("open", () => {
+})
+
+app.engine('ejs',ejsMate);
+app.set('view engine','ejs');
+app.set('views',path.join(__dirname,'views'));
+app.use(express.urlencoded({extended:true}));
+app.use(methodOverride('_method'));
+app.use(helmet( {contentSecurityPolicy: false} ));
+
+const secret =  process.env.SECRET || 'secretshouldbebetter';
+
+const store = new MongoStore({
+    url:dbUrl,
+    secret,
+    touchAfter: 24*60*60
+})
+
+store.on("error", function (e) {
+})
+
+const sesssion_config = {
+    store,
+    secret,
+    resave : false,
+    saveUninitialized : true,
+    cookie : {
+        httpOnly : true,
+        expires : Date.now() + 1000*60*60*24*7,
+        maxAge : 1000*60*60*24*7
+    }
+};
+app.use(session(sesssion_config));
+app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-passport.use(new localStrategy(User.authenticate()));
+passport.use(new LocalStrategy(User.authenticate()));
 
 passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.deserializeUser(User.deserializeUser()); 
 
-
-let userId = undefined ;
-let redirectUrl = undefined;
-
-const isloggedin = async (req,res,next) => {
-    // console.log('req.isAuthenticated =' ,req.isAuthenticated());
-    if(userId){
-         next();
-    }else{
-        userId = undefined;
-       return res.redirect('/login');
-    }
-}
-
-const isHotelAuthor = async (req,res,next) => {
-    const {hid} = req.params;
-    const aa = await Hotel.findById(hid);
-
-    const a = String(userId);
-    const b = String(aa.hotelauthor);
-
-    if(a==b){
-         next();
-    }else{
-       return res.redirect('/');
-    }
-}
-
-const isCommentAuthor = async (req,res,next) => {
-    const {hid,cid} = req.params;
-    const aa = await Comment.findById(cid);
-    console.log(userId,'==========AAAAAAAAAAAAAAAAA===============',aa.author);
-    
-    const a = String(userId);
-    const b = String(aa.author);
-    console.log(`a=${a}`);
-    console.log(`b=${b}`);
-    if(a==b){
-    // if(userId == aa.author){
-         next();
-         return;
-    }else{
-       return res.redirect(`/hotel/${hid}`);
-    }
-}
-
-
-app.get('/me', isloggedin ,async (req,res)=>{
-    redirectUrl = '/me';
-    // res.send('pppppp');
-    console.log('user =',req.user);
-
-    const u = await  User.findById(userId);
-
-    if(u){
-        res.render('user.ejs',{u});
-    }else{
-    res.send('sssss = ' + u);
-    }
+app.use((req,res,next)=> {
+    res.locals.currentUser = req.user;
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    next();
 });
 
-app.get('/register',(req,res)=>{
-    res.render('register.ejs');
+app.get('/fakeUser',async (req,res) => {
+    const user = new User({email : 'sushantthedevil@gmail.com', username : 'devilsushant'});
+    const newUser = await User.register(user,'chicken');
+    res.send(newUser);
 })
 
-app.post('/register',async(req,res)=>{
-    console.log('register user =',req.user);
-    console.log('ppppppppppppppppppppppppppppppp\n');
-    const {userName,password,email} = req.body;
-    const user = new User({email:email,username:userName});
-    const newUser = await User.register(user,password);
-    console.log('newUser =',newUser);
-    res.redirect('/');
-})
+app.use(express.static('public'));
 
-app.get('/login',(req,res)=>{
-    // console.log('login user =',passport.user);
-    res.render('login.ejs');
-})
+app.use('/',userRoutes);
+app.use('/hotel',Hotel_router);
+app.use('/hotel/:id/reviews',review_router);
+app.use(mongoSanitize());
 
-app.get('/pay/:hid/:rid', async (req,res)=>{
-    const {hid,rid} = req.params;
-    let ah = await Hotel.findById(hid);
-    let ar = await Room.findById(rid);
-    res.render('pay.ejs',{ah,ar});
-})
-
-app.post('/login',passport.authenticate('local',{failureFlash:true   ,failureRedirect:'/login'}),(req,res)=>{
- // logged
- console.log('req.user =', req.user);
- userId = req.user._id;
-    // res.send(req.user.username);
-    if(redirectUrl){
-        res.redirect(redirectUrl);
-    }else{
-    res.redirect('/');
-    }
+app.get('/', (req,res) => {
+    res.render('home');
 });
 
-app.get('/logout',(req,res)=>{
-    userId = undefined;
-    req.logout();
-    res.redirect('/');
+
+app.all('*',(req,res,next)=>{
+    next(new expresError('page went wrong',404));
 });
 
-app.get('/',(req,res)=>{
-    res.render('home.ejs');
-})
-
-app.get('/hotels',async (req,res)=>{
-    const allHotel = await Hotel.find();
-
-    console.log(allHotel);
-
-    res.render('hotels.ejs',{allHotel});
+app.use((err,req,res,next)=>{
+    const {statusCode = 500 , message = 'some thing went wrong'} = err;
+    res.status(statusCode).render('error.ejs',{err});
 });
 
-app.get('/hotel/:hid', async (req,res)=>{
-    const {hid} = req.params;
-    console.log('1 id = ',hid);
-    const aa = await Hotel.findById(hid).populate(['room','comment']);
-    console.log('h = ',aa);
-    res.render('hotel.ejs',{aa});
-})
+const port = process.env.PORT || 3030;
 
-app.get('/addHotel', isloggedin,async (req,res)=>{
-redirectUrl = '/addHotel';
-    const allRoom = await Room.find();
-
-    console.log(allRoom);
-
-    res.render('addHotel.ejs',{allRoom});
-})
-
-app.get('/addRoom/:hid', isloggedin , isHotelAuthor ,async (req,res)=>{
-    const {hid} = req.params;
-    const aa = await Hotel.findById(hid);
-    res.render('addRoom.ejs',{aa});
-})
-
-
-app.post('/addRoom/:id',async (req,res)=>{
-
-    console.log('add room ========== post');
-
-    const {id} = req.params;
-    console.log('add room kkkkkkkkkkkkkkkkkkkkkkkkkkkkk\n');
-    const  {roomName,roomSize,roomPrice} = req.body;
-    const newRoom = new Room({
-        roomName:roomName,
-        roomSize:roomSize,
-        roomPrice:roomPrice
-    });
-
-    await newRoom.save().then(()=>console.log(req.body));
-
-    const one_room = await Room.findOne({roomName:roomName,
-        roomSize:roomSize,
-        roomPrice:roomPrice});
-
-    console.log(one_room._id);
-
-
-    const aa = await Hotel.findById(id);
-
-    aa.room.push(one_room._id);
-
-    await aa.save();
-
-    console.log('h final = ',aa);
-
-    res.redirect(`/hotel/${id}`);
-})
-
-app.post('/addHotel',async (req,res)=>{
-    console.log('add hotel ========== post');
-
-    const  {hotelName,hotelLocation,hotelRoomPrice} = req.body;
-    const newHotel = new Hotel({
-        hotelauthor:userId,
-        name:hotelName,
-        location:hotelLocation,
-    });
-
-    await newHotel.save().then(()=>console.log(req.body));
-
-    const allHotel = await Hotel.find();
-
-    console.log(allHotel);
-
-    res.render('hotels.ejs',{allHotel});
+app.listen(port, () => {
 });
-
-app.post('/addComment/:hid',isloggedin,async (req,res)=>{
-    
-    console.log('add comment ========== post');
-
-    const {hid} = req.params;
-redirectUrl = `/addComment/${hid}`;
-    console.log('add room kkkkkkkkkkkkkkkkkkkkkkkkkkkkk\n');
-    const  {author,body,stars} = req.body;
-    const newComment = new Comment({
-        author:userId,
-        body:body,
-        stars:stars
-    });
-
-    await newComment.save().then(()=>console.log(req.body));
-
-    const one_comment = await Comment.findOne({
-        author:userId,
-        body:body,
-        stars:stars
-    });
-
-    console.log(one_comment._id);
-
-
-    const aa = await Hotel.findById(hid);
-
-    aa.comment.push(one_comment._id);
-    await aa.save();
-
-    console.log('h final = ',aa);
-
-    res.redirect(`/hotel/${hid}`);
-});
-
-app.get('/addHotel/:hid',isloggedin,async (req,res)=>{
-    const {hid} = req.params;
-redirectUrl = `/addHotel/${hid}`;
-
-    const aa = await Hotel.findById(hid);
-    res.render('hoteEdit.ejs',{aa});
-})
-
-app.patch('/addHotel/:hid',async  (req,res)=>{
-
-    const {hotelName,hotelLocation} = req.body;
-    const {hid} = req.params;
-    const aa = await Hotel.findById(hid);
-    aa.location = hotelLocation;
-    aa.name = hotelName;
-    await aa.save();
-    res.redirect(`/hotel/${hid}`);
-    // res.render('hoteEdit.ejs',{aa});
-    // res.send('patch of hotel');
-})
-
-
-app.post('/userroom/:hid/:rid', isloggedin ,async (req,res)=>{
-    const {hid,rid} = req.params;
-    redirectUrl = `/userroom/${hid}/${rid}`;
-
-    const a = {hotel : hid, room : rid};
-
-    const u = await User.findById(userId);
-
-    u.hotelroom.push(a);
-
-    await u.save();
-
-    res.redirect('/me');
-
-    res.redirect(`/hotel/${hid}`);
-})
-
-
-app.delete('/room/:hid/:id',isloggedin,isHotelAuthor,async (req,res)=>{
-    const {hid,id} = req.params;
-    redirectUrl = `/room/${hid}/${rid}`;
-
-    console.log('room delete id =',id);
-    await Room.findByIdAndDelete(id);
-
-    // const h = Hotel.findById(hid);
-    // // h.room.filter(id);
-    // await h.save();
-
-    res.redirect(`/hotel/${hid}`);
-})
-
-
-app.delete('/comment/:hid/:cid', isloggedin ,isCommentAuthor,async(req,res)=>{
-    const {hid,cid} = req.params;
-    console.log('=============uuuuuuu=================uuuu============');
-    console.log('comment delete id =',cid);
-    await Comment.findByIdAndDelete(cid);
-
-    // const h = Hotel.findById(hid);
-    // h.comment.filter(cid);
-    // h.save(); 
-
-    res.redirect(`/hotel/${hid}`);
-})
-
-
-app.delete('/hotel/:hid',isloggedin,isHotelAuthor,async (req,res)=>{
-    const {hid} = req.params;
-    redirectUrl = `/hotel/${hid}`;
-    console.log('hotel delete id =',hid);
-    await Hotel.findByIdAndDelete(hid);
-    res.redirect('/hotels');
-})
-
-
-app.listen(3030,()=>{
-    console.log('server running :) 3030');
-})

@@ -1,6 +1,22 @@
-# BookoMania
+# Mapper - A Website to Review Places on Earth
 
-# TO RUN
+### WEBSITE : https://fast-plateau-29252.herokuapp.com/
 
-### node app.js
-### http://localhost:3030/
+## Tech Stack and API Used
+
+* NodeJS
+* Express
+* EJS
+* CSS3
+* JS
+* Passport
+* Joi
+* Flash
+* MongoDB Atlas
+* Cloudinary
+* MapBox
+
+## HOW TO RUN
+* `npm i`
+* `node app.js` 
+* `localhost:3030`

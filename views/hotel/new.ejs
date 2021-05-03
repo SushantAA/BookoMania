@@ -1,0 +1,79 @@
+<% layout('layout/boilerplate') %> 
+
+<style>
+    body{
+        height: 100%;
+        margin: 0;
+        background: #116e99;  /* fallback for old browsers */
+        background: -webkit-linear-gradient(to right, #116e99, #1f1199);  /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to right, #116e99, #1f1199);  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        background: url(/image/droplet.jpg);
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+    }
+</style>
+
+<div class="row">
+<h1 class="text-center">New Hotel</h1>
+<div class="col-6 offset-3">
+
+    <form action="/hotel" method="POST" class="needs-validation" novalidate enctype="multipart/form-data">
+
+        <div class="mb-3">
+            <h5 for="formGroupExampleInput" class="form-label">Title</h5>
+            <input type="text" name="title" class="form-control" id="formGroupExampleInput" placeholder="Example input placeholder" required>
+            <div class="valid-feedback">
+                Looks good!
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <h5 for="formGroupExampleInput" class="form-label">Location</h5>
+            <input type="text" name="location" class="form-control" id="formGroupExampleInput" placeholder="Example input placeholder"  required>
+            <div class="valid-feedback">
+                Looks good!
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <h5 for="formGroupExampleInput" class="form-label">Description</h5>
+            <textarea class="form-control" name="discription" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" required></textarea>
+            <div class="valid-feedback">
+                Looks good!
+            </div>
+        </div>
+        
+        <!-- <div class="mb-3">
+            <label for="formGroupExampleInput" class="form-label">Image</label>
+            <input type="text" name="image" class="form-control" id="formGroupExampleInput" placeholder="Example input placeholder" required>
+            <div class="valid-feedback">
+                Looks good!
+            </div>
+        </div> -->
+
+        <div class="mb-3 custom-file">
+            <h5 for="formFileMultiple" class="form-label coustom-file-lable">Add Image</h5>
+            <input class="form-control" type="file" name="image" id="formFileMultiple" multiple>
+        </div>
+
+        <!-- <input type="file" id="" multiple> -->
+
+        <div class="mb-3">
+            <div class="input-group">
+              <div class="input-group-text">Price $</div>
+              <input type="number" name="price" class="form-control" id="autoSizingInputGroup" placeholder="0.0" required>
+            </div>
+            <div class="valid-feedback">
+                Looks good!
+            </div>
+        </div>
+
+        <div class="mb-3" style="text-align: center;" >
+            <button class="btn btn-success">submit</button>
+        </div>
+    </form>
+</div>
+</div>
+
+<script src="/scripts/form_validate.js" ></script>
