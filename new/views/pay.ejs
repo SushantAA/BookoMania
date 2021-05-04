@@ -19,26 +19,26 @@
     </div>
     
     <h2>Payment : <%=num*hh.price%></h2>
-    <form action="/cg/<%=hid%>/done" method="POST" class="form">
+    <form action="/cg/<%=hid%>/done" method="POST" class="form" name="pay_form" onsubmit="return validate(this);">
       <div class="pay-card space icon-relative">
         <label class="label">Card holder:</label>
-        <input type="text" class="input" placeholder="Card Holder">
+        <input type="text" class="input" placeholder="Card Holder" required>
         <i class="fas fa-user"></i>
       </div>
       <div class="pay-card space icon-relative">
         <label class="label">Card number:</label>
-        <input type="text" class="input" data-mask="0000 0000 0000 0000" placeholder="Card Number">
+        <input type="number" class="input" data-mask="0000 0000 0000 0000" name="cardno" placeholder="Card Number" required>
         <i class="far fa-credit-card"></i>
       </div>
       <div class="pay-card-grp space">
         <div class="pay-card-item icon-relative">
           <label class="label">Expiry date:</label>
-          <input type="text" name="expiry-data" class="input"  placeholder="00 / 00">
+          <input type="text" name="expiry-data" class="input"  placeholder="00 / 00" required>
           <i class="far fa-calendar-alt"></i>
         </div>
         <div class="pay-card-item icon-relative">
           <label class="label">CVC:</label>
-          <input type="password" class="input" data-mask="000" placeholder="000">
+          <input type="password" class="input" data-mask="000" placeholder="000" required>
           <i class="fas fa-lock"></i>
         </div>
       </div>
@@ -51,4 +51,20 @@
 
 <script>
     $("input[name='expiry-data']").mask("00 / 00");
+    function validate(form){
+      var inputtxt = form.cardno.value;
+      var american_cardno = /^(?:3[47][0-9]{13})$/; //American Express credit card starts with 34 or 37, length 15 digits
+      var visa_cardno = /^(?:4[0-9]{12}(?:[0-9]{3})?)$/; //Visa card starts with 4, length 13 or 16 digits
+      var master_cardno = /^(?:5[1-5][0-9]{14})$/; //MasterCard starts with 51 through 55, length 16 digits
+      if(inputtxt.match(american_cardno) || inputtxt.match(master_cardno) || inputtxt.match(visa_cardno))
+      {
+        return true;
+      }
+      else
+      {
+        alert("Not a valid credit card number!");
+        return false;
+      }
+    }
+
 </script>
