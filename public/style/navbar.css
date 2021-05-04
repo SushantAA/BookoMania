@@ -1,0 +1,55 @@
+#navbar1{
+    background-color: transparent;
+}
+
+#navlink1{
+  color: #ff304f;
+}
+
+.navbar-toggler-icon{
+  background-image:url(/image/toggle-icon.svg) ;
+}
+
+.anchor-nav{
+    color: #fff;
+}
+
+.footer-padding {
+  padding-bottom: 2rem;
+}
+
+.bgcolor{
+  background-color: transparent;
+}
+
+.footer {
+  font-size: 14px;
+  text-align: center;
+  width: 100%;
+}
+
+.footer div p {
+  margin: 10px 0;
+  color: #fff;
+}
+
+.footer i {
+  color: red;
+}
+
+.footer a {
+  color: #3c97bf;
+  text-decoration: none;
+}
+
+.contact-icon{
+  color: #fff;
+  margin:2% 1%;
+  cursor:pointer;
+  transition:1s;
+}
+
+.contact-icon:hover{
+  width:2rem;
+  height:2rem;
+}
