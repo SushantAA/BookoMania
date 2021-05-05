@@ -1,6 +1,6 @@
-# Mapper - A Website to Review Places on Earth
+# BookoMania - View and Book best Hotels all around the World
 
-### WEBSITE : https://fast-plateau-29252.herokuapp.com/
+<!-- ### WEBSITE : https://fast-plateau-29252.herokuapp.com/ -->
 
 ## Tech Stack and API Used
 
