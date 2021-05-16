@@ -44,7 +44,11 @@ router.get('/me',async (req,res)=>{
         const b = await Hotel.findById(a);
         arr.push(b);
     }
-    res.render('users/me',{user,arr});
+    let price = [];
+    for( a of user.price){
+        price.push(a);
+    }
+    res.render('users/me',{user,arr,price});
 });
 
 router.get('/logout',(req,res)=> {

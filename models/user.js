@@ -11,6 +11,9 @@ const UserSchema = new Schema({
     booking:[{
           type : Schema.Types.ObjectId,
           ref : 'Hotel'
+    }],
+    price:[{
+        type: Number
     }]
 });
 

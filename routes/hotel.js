@@ -138,9 +138,12 @@ router.get('/:id/edit',isLogedin , isAuthor ,catchAsync( async (req,res) => {
     res.render('hotel/edit',{a});
 }));
 
+let number_pay = 0;
+
 router.post('/:hid/book', async (req,res) => {
     const {hid} = req.params;
     const {num} = req.body;
+    number_pay = num;
     const hh = await Hotel.findById(hid);
     res.render('pay',{hh,hid,num})
 });
@@ -150,6 +153,8 @@ router.post('/:hid/done', async (req,res) => {
     const h = await Hotel.findById(hid);
     let a =  req.user;
     a.booking.push(hid);
+    a.price.push(number_pay*h.price);
+    number_pay = 0;
     await a.save();
     res.redirect('/me');
 });

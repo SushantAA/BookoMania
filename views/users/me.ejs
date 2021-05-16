@@ -8,18 +8,18 @@
 </div>
 <h2 class="center">Bookings</h2>
 <div class="row">
-<% for(a of arr) {%>
+<%  for(let i=0;i<arr.length;i++) {%>
     <div class="col-lg-4 col-md-6 mb-5">
         <div class="card">
-            <!-- <div class="card-header upcard">
-                <h6>Price = $ <%=a.price%></h6>
-            </div> -->
+       
+            
             <div class="card-body">
-                <h5 class="card-title">Hotelname = <%=a.title%></h5>
-                <p class="card-text">Location = <%=a.location%></p>
+                <h5 class="card-title">Hotelname = <%=arr[i].title%></h5>
+                <p class="card-text">Location = <%=arr[i].location%></p>
+                <p class="card-text">Price = <%=price[i]%></p>
             </div>
             <div class="d-grid gap-2">
-            <a href="/hotel/<%=a._id%>" class="btn btn-sm btn-info">link</a>
+            <a href="/hotel/<%=arr[i]._id%>" class="btn btn-sm btn-info">link</a>
             </div>
         </div>
     </div>
