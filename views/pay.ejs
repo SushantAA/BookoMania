@@ -33,12 +33,12 @@
       <div class="pay-card-grp space">
         <div class="pay-card-item icon-relative">
           <label class="label">Expiry date:</label>
-          <input type="text" name="expiry-data" class="input"  placeholder="00 / 00" required>
+          <input type="text" name="expdate" class="input" id="exp" placeholder="00 / 00" required>
           <i class="far fa-calendar-alt"></i>
         </div>
         <div class="pay-card-item icon-relative">
           <label class="label">CVC:</label>
-          <input type="password" class="input"  placeholder="000" required>
+          <input type="password" class="input" placeholder="000" required minlength="3" maxlength="4">
           <i class="fas fa-lock"></i>
         </div>
       </div>
@@ -50,21 +50,47 @@
 </div>
 
 <script>
-    $("input[name='expiry-data']").mask("00 / 00");
+    $("input[name='expdate']").mask("00 / 00");
+    function normalizeYear(year){
+    // Century fix
+    var YEARS_AHEAD = 20;
+    if (year<100){
+        var nowYear = new Date().getFullYear();
+        year += Math.floor(nowYear/100)*100;
+        if (year > nowYear + YEARS_AHEAD){
+            year -= 100;
+        } else if (year <= nowYear - 100 + YEARS_AHEAD) {
+            year += 100;
+        }
+    }
+      return year;
+    }
     function validate(form){
       var inputtxt = form.cardno.value;
+      var match=$('#exp').val().match(/^\s*(0?[1-9]|1[0-2])\s\/\s(\d\d|\d{4})\s*$/);
       var american_cardno = /^(?:3[47][0-9]{13})$/; //American Express credit card starts with 34 or 37, length 15 digits
       var visa_cardno = /^(?:4[0-9]{12}(?:[0-9]{3})?)$/; //Visa card starts with 4, length 13 or 16 digits
       var master_cardno = /^(?:5[1-5][0-9]{14})$/; //MasterCard starts with 51 through 55, length 16 digits
-      if(inputtxt.match(american_cardno) || inputtxt.match(master_cardno) || inputtxt.match(visa_cardno))
-      {
-        return true;
-      }
-      else
+      if(!(inputtxt.match(american_cardno) || inputtxt.match(master_cardno) || inputtxt.match(visa_cardno)))
       {
         alert("Not a valid credit card number!");
         return false;
       }
+      else if(!match){
+          alert('Input string isn\'t match the expiration date format or date fragments are invalid.')
+          return false;
+      }
+      else{
+      var exp = new Date(normalizeYear(1*match[2]),1*match[1]-1,1).valueOf();
+      var now = new Date();
+      var currMonth = new Date(now.getFullYear(),now.getMonth(),1).valueOf();
+      if (exp<=currMonth){
+          alert('Expired');
+          return false;
+      } else {
+          return true;
+      };
+    }
     }
 
 </script>
