@@ -40,13 +40,23 @@ router.get('/me',async (req,res)=>{
     const user = req.user;
     await user.populate(['booking']);
     let arr = [];
+    let price = [];
+    let taken_arr = [];
     for( a of user.booking){
         const b = await Hotel.findById(a);
-        arr.push(b);
+        if(b){
+            arr.push(b);
+            taken_arr.push(1);
+        }else{
+            taken_arr.push(0);
+        }
     }
-    let price = [];
+    let i=0;
     for( a of user.price){
-        price.push(a);
+        if(taken_arr[i]==1){
+            price.push(a);
+        }
+        i+=1;
     }
     res.render('users/me',{user,arr,price});
 });
