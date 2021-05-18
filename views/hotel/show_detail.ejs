@@ -37,7 +37,7 @@
             <li class="list-group-item"><b>author : </b><%= a.author.username %></li>
             <li class="list-group-item"><b>Location : </b><%= a.location %></li>
             <li class="list-group-item"><b>Discription : </b><%= a.discription %></li>
-            <li class="list-group-item"><b>Price per Room : $</b><%= a.price %></li>
+            <li class="list-group-item"><b>Price per Room : &#8377;</b><%= a.price %></li>
             <% if(currentUser){ %>
             <form action="/hotel/<%=a._id%>/book" method="POST">
 
