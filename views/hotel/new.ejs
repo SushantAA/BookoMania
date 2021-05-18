@@ -12,10 +12,13 @@
         background-size: cover;
         background-attachment: fixed;
     }
+    .form-label{
+        color:#fff;
+    }
 </style>
 
 <div class="row">
-<h1 class="text-center">New Hotel</h1>
+<h1 class="text-center" style="color:#fff">New Hotel</h1>
 <div class="col-6 offset-3">
 
     <form action="/hotel" method="POST" class="needs-validation" novalidate enctype="multipart/form-data">
@@ -43,21 +46,11 @@
                 Looks good!
             </div>
         </div>
-        
-        <!-- <div class="mb-3">
-            <label for="formGroupExampleInput" class="form-label">Image</label>
-            <input type="text" name="image" class="form-control" id="formGroupExampleInput" placeholder="Example input placeholder" required>
-            <div class="valid-feedback">
-                Looks good!
-            </div>
-        </div> -->
 
         <div class="mb-3 custom-file">
             <h5 for="formFileMultiple" class="form-label coustom-file-lable">Add Image</h5>
             <input class="form-control" type="file" name="image" id="formFileMultiple" multiple>
         </div>
-
-        <!-- <input type="file" id="" multiple> -->
 
         <div class="mb-3">
             <div class="input-group">
