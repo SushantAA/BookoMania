@@ -1,6 +1,6 @@
 # BookoMania - View and Book best Hotels all around the World
 
-### WEBSITE : https://hotel-bookomania.herokuapp.com/ 
+### WEBSITE : https://bookomania.onrender.com/ 
 
 ## Tech Stack and API Used
 
